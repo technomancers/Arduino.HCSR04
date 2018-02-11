@@ -29,6 +29,7 @@ HCSR04::HCSR04(int trigPin, int echoPin)
 
 int HCSR04::distance(float speedOfSound)
 {
+  unsigned long maxTime = (_maxTol * 2) / speedOfSound;
   int iteration = 0;
 LOOP:
   iteration++;
@@ -36,7 +37,7 @@ LOOP:
   {
     return _badValue;
   }
-  unsigned int duration = _echoInMicroseconds();
+  unsigned long duration = _echoInMicroseconds(maxTime);
   int distance = (duration * speedOfSound / 2);
   if (distance < _minTol || distance > _maxTol)
   {
@@ -50,14 +51,10 @@ LOOP:
   return distance;
 }
 
-unsigned int HCSR04::_echoInMicroseconds()
+unsigned long HCSR04::_echoInMicroseconds(unsigned long maxTime)
 {
   digitalWrite(_trigPin, LOW);
-  // Arduino Primo doesn't have access to pulseIn.
-  while(digitalRead(_echoPin) == LOW); //Wait for the high signal
-  unsigned int pulseStart = micros();
-  while(digitalRead(_echoPin) == HIGH); //Wait for the low signal
-  unsigned int pulse = micros() - pulseStart;
+  unsigned long pulse = pulseIn(_echoPin, HIGH, maxTime);
   digitalWrite(_trigPin, HIGH);
   return pulse;
 }

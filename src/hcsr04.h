@@ -31,14 +31,14 @@ class HCSR04
     void setMinTolerance(int minTol);
     void setMaxTolerance(int maxTol);
   private:
-    unsigned int _echoInMicroseconds();
+    unsigned long _echoInMicroseconds(unsigned long maxTime);
     int _trigPin;
     int _echoPin;
     bool _retry = true;
-    int _retries = 100;
+    int _retries = 5;
     int _badValue = -1;
-    int _minTol = 0;
-    int _maxTol = 500;
+    int _minTol = 3;
+    int _maxTol = 475;
 };
 
 #endif
